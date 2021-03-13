@@ -1,8 +1,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<name>easy</name>
+	<name>easy-biance</name>
 	<description>Neo easy code.</description>
-	<url>https://github.com/darkice1/EASYCORE</url>
+	<url>https://github.com/darkice1/easy-biance</url>
 	<!--	https://oss.sonatype.org/#stagingRepositories -->
 	<licenses>
 		<license>
@@ -11,8 +11,8 @@
 		</license>
 	</licenses>
 	<scm>
-		<url>https://github.com/darkice1/EASYCORE</url>
-		<connection>https://github.com/darkice1/EASYCORE.git</connection>
+		<url>https://github.com/darkice1/easy-biance</url>
+		<connection>https://github.com/darkice1/easy-biance.git</connection>
 	</scm>
 
 	<developers>
