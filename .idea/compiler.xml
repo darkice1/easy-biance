@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Annotation profile for easy" enabled="true">
+        <sourceOutputDir name="web/WEB-INF/classes/generated-sources/annotations" />
+        <sourceTestOutputDir name="web/WEB-INF/classes/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="easy-biance" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="easy-biance" target="8" />
+    </bytecodeTargetLevel>
+  </component>
+</project>
