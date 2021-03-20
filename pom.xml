@@ -14,7 +14,13 @@
 		<url>https://github.com/darkice1/easy-biance</url>
 		<connection>https://github.com/darkice1/easy-biance.git</connection>
 	</scm>
-
+	<pluginRepositories>
+		<pluginRepository>
+			<id>jcenter</id>
+			<name>JCenter</name>
+			<url>https://jcenter.bintray.com/</url>
+		</pluginRepository>
+	</pluginRepositories>
 	<developers>
 		<developer>
 			<name>neo</name>
@@ -142,6 +148,21 @@
 						<phase>package</phase>
 						<goals>
 							<goal>jar-no-fork</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.jetbrains.dokka</groupId>
+				<artifactId>dokka-maven-plugin</artifactId>
+				<version>1.4.10</version>
+				<executions>
+					<execution>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>dokka</goal>
+							<goal>javadoc</goal>
+							<goal>javadocJar</goal>
 						</goals>
 					</execution>
 				</executions>
