@@ -2,9 +2,9 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <annotationProcessing>
-      <profile name="Annotation profile for easy" enabled="true">
-        <sourceOutputDir name="web/WEB-INF/classes/generated-sources/annotations" />
-        <sourceTestOutputDir name="web/WEB-INF/classes/generated-test-sources/test-annotations" />
+      <profile name="Annotation profile for easy-biance" enabled="true">
+        <sourceOutputDir name="bin/generated-sources/annotations" />
+        <sourceTestOutputDir name="bin/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="easy-biance" />
       </profile>

@@ -10,14 +10,37 @@ BIANCE_SECRET=my secret
 ```
 
 # 币安API文档
-1. 英文 https://github.com/binance/binance-spot-api-docs/blob/master/rest-api_CN.md
-1. 中文比较老需要以英文为准 https://github.com/binance/binance-spot-api-docs/blob/master/rest-api.md
-
+1. 英文 https://github.com/binance/binance-spot-api-docs/blob/master/rest-api.md
+1. 中文比较老需要以英文为准 https://github.com/binance/binance-spot-api-docs/blob/master/rest-api_CN.md
 # 服务器时间
 BianceClient.time()
 
 # 交易规范信息
 BianceClient.exchangeInfo()
+
+# 深度信息
+BianceClient.depth()
+
+# 近期成交
+BianceClient.trades()
+
+# 查询历史成交
+BianceClient.historicalTrades()
+
+# 近期成交(归集)
+BianceClient.aggTrades()
+
+# K线数据
+BianceClient.klines()
+
+# 24hr价格变动情况
+BianceClient.hr24()
+
+# 查询订单
+BianceClient.findorder()
+
+# 最优挂单接口
+BianceClient.bookTicker()
 
 # 当前平均价格
 BianceClient.avgPrice()
@@ -26,3 +49,22 @@ BianceClient.avgPrice()
 BianceClient.tickerPrice()
 
 # 最优挂单接口
+BianceClient.bookPrice()
+
+# 下单接口
+BianceClient.order()
+
+# 测试下单接口
+BianceClient.orderTest()
+
+# 查看账户当前挂单
+BianceClient.openOrders()
+
+# 获取所有订单信息
+BianceClient.allOrders()
+
+# 获取账户信息
+BianceClient.account()
+
+# 账户成交历史
+BianceClient.myTrades()

@@ -1,6 +1,4 @@
 import easy.biance.BianceClient
-import easy.biance.enums.Side
-import easy.biance.enums.Type
 
 /**
  * @Project：easy-biance
@@ -25,6 +23,20 @@ object Test {
 		println(BianceClient.order(symbol = "BTCUSDT",side = Side.BUY,type=Type.LIMIT,
 			timeInForce=TimeInForce.GTC,price=1.0,quantity = 1.0))
 */
-		println(BianceClient.order(symbol = "BTCUSDT",side = Side.BUY,type=Type.MARKET, quantity = 1.0))
+//		println(BianceClient.order(symbol = "BTCUSDT",side = Side.BUY,type=Type.MARKET, quantity = 1.0))
+
+//		println(BianceClient.allOrders("BTCUSDT"))
+//		println(BianceClient.account())
+//		println(BianceClient.myTrades("BTCUSDT"))
+//		println(BianceClient.orderTest(symbol = "BTCUSDT",side = Side.BUY,type= Type.MARKET, quantity = 1.0))
+//		println(BianceClient.openOrders())
+//		println(BianceClient.depth("BTCUSDT"))
+//		println(BianceClient.trades("BTCUSDT"))
+//		println(BianceClient.historicalTrades("BTCUSDT"))
+//		println(BianceClient.aggTrades("BTCUSDT"))
+//		println(BianceClient.hr24("BTCUSDT"))
+		println(BianceClient.findorder("BTCUSDT",1))
+
+
 	}
 }
