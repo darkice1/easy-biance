@@ -1,5 +1,5 @@
 # 币安JAVASDK
-快速接入币安的开源sdk。目前实现了部分接口。如果需要增加可以联系作者或者直接增加。
+快速接入币安的开源sdk。目前实现了最实用的部分接口。
 
 # 初始化
 建立放config.txt中的url与api信息。config.txt示例
@@ -7,6 +7,15 @@
 BIANCE_URL=https://api.binance.com
 BIANCE_KEY=my key
 BIANCE_SECRET=my secret
+```
+# maven
+```xml
+<!-- https://mvnrepository.com/artifact/com.github.darkice1/easy-biance -->
+<dependency>
+    <groupId>com.github.darkice1</groupId>
+    <artifactId>easy-biance</artifactId>
+    <version>1.0.0</version>
+</dependency>
 ```
 
 # 币安API文档
