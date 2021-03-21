@@ -4,6 +4,7 @@ import easy.biance.enums.*
 import easy.config.Config
 import easy.io.EHttpClient
 import easy.util.Format
+import easy.util.Log
 import net.sf.json.JSON
 import net.sf.json.JSONArray
 import net.sf.json.JSONObject
@@ -79,7 +80,7 @@ object BianceClient {
 					surl = "$surl&signature=${signature(rbody)}"
 				}
 			}
-			println(surl)
+//			println(surl)
 
 			client.get(surl,head,null)
 		}
@@ -91,10 +92,17 @@ object BianceClient {
 			client.get(surl,head,null)
 		}*/
 //		println(resp)
-		return if (resp.indexOf("{") == 0) {
-			JSONObject.fromObject(resp)
-		} else {
-			JSONArray.fromObject(resp)
+		return try {
+			if (resp.indexOf("{") == 0) {
+				JSONObject.fromObject(resp)
+			} else {
+				JSONArray.fromObject(resp)
+			}
+		}
+		catch (e:Exception)
+		{
+			Log.OutException(e,"[$url]response:[$resp]")
+			JSONObject()
 		}
 	}
 

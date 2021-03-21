@@ -14,7 +14,7 @@ BIANCE_SECRET=my secret
 <dependency>
     <groupId>com.github.darkice1</groupId>
     <artifactId>easy-biance</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
 </dependency>
 ```
 
