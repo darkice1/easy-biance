@@ -8,6 +8,7 @@ import easy.util.Log
 import net.sf.json.JSON
 import net.sf.json.JSONArray
 import net.sf.json.JSONObject
+import java.math.BigDecimal
 
 
 /**
@@ -157,11 +158,11 @@ object BianceClient {
 	/**
 	 * 当前平均价格
 	 */
-	fun avgPrice(symbol:String):JSON{
+	fun avgPrice(symbol:String):JSONObject{
 		val map = HashMap<String,Any>()
 		map["symbol"] = symbol
 
-		return request("/api/v3/avgPrice",map)
+		return request("/api/v3/avgPrice",map) as JSONObject
 	}
 
 	fun tickerPrice(symbol:String?=null):JSON{
@@ -185,7 +186,17 @@ object BianceClient {
 	{
 		if (value != null)
 		{
-			map[name] = value
+//			println("$name value ${value.javaClass.name} $value")
+			val cname = value.javaClass.name
+			if (cname == "java.lang.Double")
+			{
+				map[name] = BigDecimal(value as Double).setScale(6,BigDecimal.ROUND_HALF_UP)
+//				println("#### $map")
+			}
+			else
+			{
+				map[name] = value
+			}
 		}
 	}
 

@@ -1,4 +1,8 @@
 import easy.biance.BianceClient
+import easy.biance.enums.Side
+import easy.biance.enums.Type
+import easy.util.EDate
+import net.sf.json.JSONObject
 
 /**
  * @Project：easy-biance
@@ -10,13 +14,22 @@ import easy.biance.BianceClient
  * @Modified By:
  */
 object Test {
+
+	fun getCnyToSymbolPrint(symbol:String,cny:Double):Double{
+		val usd = 0.149479*cny
+		val json = BianceClient.avgPrice(symbol)
+		val sprie = json.getDouble("price")
+
+		return usd/sprie
+	}
+
 	@JvmStatic
 	fun main(args: Array<String>) {
 
-		println(BianceClient.time())
+//		println(BianceClient.time())
 //		println(BianceClient.exchangeInfo())
 //		println(BianceClient.klines("BTCUSDT"))
-		println(BianceClient.avgPrice("BTCUSDT"))
+// 		println(BianceClient.avgPrice("BTCUSDT"))
 //		println(BianceClient.tickerPrice())
 //		println(BianceClient.bookPrice())
 /*
@@ -35,8 +48,16 @@ object Test {
 //		println(BianceClient.historicalTrades("BTCUSDT"))
 //		println(BianceClient.aggTrades("BTCUSDT"))
 //		println(BianceClient.hr24("BTCUSDT"))
-		println(BianceClient.findorder("BTCUSDT",1))
+//		println(BianceClient.findorder("BTCUSDT",1))
+		val num = 100.0
+//		val usd = num*0.149479
+		val snum = getCnyToSymbolPrint("BTCUSDT",num)
+//		println(snum)
 
+		val newClientOrderId = "TEST_${EDate().toString().replace(":","").replace(" ","")}"
+		val json = BianceClient.orderTest(symbol = "BTCUSDT",side = Side.BUY,type= Type.MARKET,newClientOrderId=newClientOrderId,
+			quantity = snum)
+		println(json)
 
 	}
 }
