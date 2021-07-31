@@ -14,7 +14,7 @@ BIANCE_SECRET=my secret
 <dependency>
     <groupId>com.github.darkice1</groupId>
     <artifactId>easy-biance</artifactId>
-    <version>1.0.3</version>
+    <version>1.0.4</version>
 </dependency>
 ```
 
@@ -77,3 +77,18 @@ BianceClient.account()
 
 # 账户成交历史
 BianceClient.myTrades()
+
+# 获取子账号列表
+BianceClient.subAccountList()
+
+# 币安宝获取活期产品列表
+BianceClient.dailyProductList()
+
+# 币安宝获取用户当日剩余活期可申购余额
+BianceClient.dailyUserLeftQuota()
+
+# 币安宝获取用户活期产品持仓
+BianceClient.dailyPosition()
+
+# 币安宝获取用户当日活期可赎回余额
+BianceClient.dailyUserRedemptionQuota()

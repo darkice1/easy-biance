@@ -1,4 +1,5 @@
 import easy.biance.BianceClient
+import easy.biance.enums.DailyRedemptionType
 import easy.biance.enums.Side
 import easy.biance.enums.Type
 import easy.util.EDate
@@ -54,10 +55,16 @@ object Test {
 		val snum = getCnyToSymbolPrint("BTCUSDT",num)
 //		println(snum)
 
-		val newClientOrderId = "TEST_${EDate().toString().replace(":","").replace(" ","")}"
-		val json = BianceClient.orderTest(symbol = "BTCUSDT",side = Side.BUY,type= Type.MARKET,newClientOrderId=newClientOrderId,
-			quantity = snum)
-		println(json)
+//		val newClientOrderId = "TEST_${EDate().toString().replace(":","").replace(" ","")}"
+//		val json = BianceClient.orderTest(symbol = "BTCUSDT",side = Side.BUY,type= Type.MARKET,newClientOrderId=newClientOrderId,
+//			quantity = snum)
+
+//		println(BianceClient.subaccountlist())
+//		println(BianceClient.dailyproductlist())
+//		println(BianceClient.dailyUserLeftQuota("USDT001"))
+//		println(BianceClient.dailyPosition("USDT"))
+//		println(BianceClient.dailyUserRedemptionQuota("USDT001",DailyRedemptionType.FAST))
+		println(BianceClient.dailyPurchase("USDT001",0.01))
 
 	}
 }

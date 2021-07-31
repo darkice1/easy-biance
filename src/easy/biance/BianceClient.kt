@@ -69,6 +69,8 @@ object BianceClient {
 				post[""] = "$rbody&signature=${signature(rbody)}"
 			}
 
+//			println("$surl $post $head")
+
 			client.postToString(surl,post,head)
 		}
 		else
@@ -367,4 +369,80 @@ object BianceClient {
 		return request("/api/v3/order",map,true)
 	}
 
+	/**
+	 * 获取子账号列表
+	 */
+	fun subAccountList(email:String?=null,isFreeze:Boolean?=null,page:Int?=null,limit:Int?=null,recvWindow:Long?=null):JSON
+	{
+		val map = HashMap<String,Any>()
+		addToMap(map,"email",email)
+		addToMap(map,"isFreeze",isFreeze)
+		addToMap(map,"limit",limit)
+		addToMap(map,"page",page)
+		addToMap(map,"recvWindow",recvWindow)
+
+		return request("/sapi/v1/sub-account/list",map,true)
+	}
+
+	/**
+	 * 币安宝获取活期产品列表
+	 */
+	fun dailyProductList(status:DailyProductStatus?=null,featured:String?=null,current:Long?=null,size:Long?=null,recvWindow:Long?=null):JSONArray
+	{
+		val map = HashMap<String,Any>()
+		addToMap(map,"status",status)
+		addToMap(map,"featured",featured)
+		addToMap(map,"current",current)
+		addToMap(map,"size",size)
+		addToMap(map,"recvWindow",recvWindow)
+
+		return request("/sapi/v1/lending/daily/product/list",map,true) as JSONArray
+	}
+
+	/**
+	 * 币安宝获取用户当日剩余活期可申购余额
+	 */
+	fun dailyUserLeftQuota(productId:String,recvWindow:Long?=null):JSONObject
+	{
+		val map = HashMap<String,Any>()
+		addToMap(map,"productId",productId)
+		addToMap(map,"recvWindow",recvWindow)
+
+		return request("/sapi/v1/lending/daily/userLeftQuota",map,true) as JSONObject
+	}
+
+	/**
+	 * 币安宝获取用户活期产品持仓
+	 */
+	fun dailyPosition(asset:String,recvWindow:Long?=null):JSONArray
+	{
+		val map = HashMap<String,Any>()
+		addToMap(map,"asset",asset)
+		addToMap(map,"recvWindow",recvWindow)
+
+		return request("/sapi/v1/lending/daily/token/position",map,true) as JSONArray
+	}
+
+	/**
+	 * 币安宝获取用户当日活期可赎回余额
+	 */
+	fun dailyUserRedemptionQuota(productId:String,type:DailyRedemptionType,recvWindow:Long?=null):JSONObject
+	{
+		val map = HashMap<String,Any>()
+		addToMap(map,"productId",productId)
+		addToMap(map,"type",type)
+		addToMap(map,"recvWindow",recvWindow)
+
+		return request("/sapi/v1/lending/daily/userRedemptionQuota",map,true) as JSONObject
+	}
+
+/*	fun dailyPurchase(productId:String,amount:Double,recvWindow:Long?=null):JSONObject
+	{
+		val map = HashMap<String,Any>()
+		addToMap(map,"productId",productId)
+		addToMap(map,"amount",amount)
+		addToMap(map,"recvWindow",recvWindow)
+
+		return request("/sapi/v1/lending/daily/purchase",map, ishmac = true, ispost = true) as JSONObject
+	}*/
 }
