@@ -1,6 +1,10 @@
 # 币安JAVASDK
 快速接入币安的开源sdk。目前实现了最实用的部分接口。
 
+# 升级信息
+1. 1.0.5支持多实例可以传入参数进行实例化
+2. 1.0.4增加部分币安接口
+
 # 初始化
 建立放config.txt中的url与api信息。config.txt示例
 ```text
@@ -14,7 +18,7 @@ BIANCE_SECRET=my secret
 <dependency>
     <groupId>com.github.darkice1</groupId>
     <artifactId>easy-biance</artifactId>
-    <version>1.0.4</version>
+    <version>1.0.5</version>
 </dependency>
 ```
 

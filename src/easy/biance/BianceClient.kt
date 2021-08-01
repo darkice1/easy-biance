@@ -20,10 +20,10 @@ import java.math.BigDecimal
  * @Description:
  * @Modified By:
  */
-object BianceClient {
-	private val url: String = Config.getProperty("BIANCE_URL")
-	private val key = Config.getProperty("BIANCE_KEY")
-	private val secret: String = Config.getProperty("BIANCE_SECRET")
+class BianceClient(url: String?=null,key:String?=null,secret:String?=null) {
+	private val url: String = url?:Config.getProperty("BIANCE_URL")
+	private val key = key?:Config.getProperty("BIANCE_KEY")
+	private val secret: String = secret?:Config.getProperty("BIANCE_SECRET")
 
 	private val client = EHttpClient()
 

@@ -15,17 +15,10 @@ import net.sf.json.JSONObject
  * @Modified By:
  */
 object Test {
-
-	fun getCnyToSymbolPrint(symbol:String,cny:Double):Double{
-		val usd = 0.149479*cny
-		val json = BianceClient.avgPrice(symbol)
-		val sprie = json.getDouble("price")
-
-		return usd/sprie
-	}
-
 	@JvmStatic
 	fun main(args: Array<String>) {
+
+		val b = BianceClient()
 
 //		println(BianceClient.time())
 //		println(BianceClient.exchangeInfo())
@@ -50,9 +43,9 @@ object Test {
 //		println(BianceClient.aggTrades("BTCUSDT"))
 //		println(BianceClient.hr24("BTCUSDT"))
 //		println(BianceClient.findorder("BTCUSDT",1))
-		val num = 100.0
+//		val num = 100.0
 //		val usd = num*0.149479
-		val snum = getCnyToSymbolPrint("BTCUSDT",num)
+//		val snum = getCnyToSymbolPrint("BTCUSDT",num)
 //		println(snum)
 
 //		val newClientOrderId = "TEST_${EDate().toString().replace(":","").replace(" ","")}"
@@ -63,8 +56,8 @@ object Test {
 //		println(BianceClient.dailyproductlist())
 //		println(BianceClient.dailyUserLeftQuota("USDT001"))
 //		println(BianceClient.dailyPosition("USDT"))
-//		println(BianceClient.dailyUserRedemptionQuota("USDT001",DailyRedemptionType.FAST))
-		println(BianceClient.dailyPurchase("USDT001",0.01))
+		println(b.dailyUserRedemptionQuota("USDT001",DailyRedemptionType.FAST))
+//		println(b.dailyPurchase("USDT001",0.01))
 
 	}
 }
