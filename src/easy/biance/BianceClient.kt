@@ -119,8 +119,8 @@ class BianceClient(url: String?=null,key:String?=null,secret:String?=null) {
 	/**
 	 * 交易规范信息
 	 */
-	fun exchangeInfo():JSON{
-		return request("/api/v3/exchangeInfo",null)
+	fun exchangeInfo():JSONObject{
+		return request("/api/v3/exchangeInfo",null) as JSONObject
 	}
 
 
