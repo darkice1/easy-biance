@@ -2,3 +2,4 @@ config.txt
 target/
 bin
 .idea/
+*.iml
