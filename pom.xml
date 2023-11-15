@@ -35,13 +35,13 @@
 	<version>1.0.5</version>
 	<packaging>jar</packaging>
 	<properties>
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<maven.compiler.target>1.8</maven.compiler.target>
-		<maven.compiler.compilerVersion>1.8</maven.compiler.compilerVersion>
+		<maven.compiler.source>17</maven.compiler.source>
+		<maven.compiler.target>17</maven.compiler.target>
+		<maven.compiler.compilerVersion>17</maven.compiler.compilerVersion>
 		<javadocExecutable>${java.home}/../bin/javadoc</javadocExecutable>
-		<kotlin.version>1.4.10</kotlin.version>
+		<kotlin.version>1.9.20</kotlin.version>
 	</properties>
-	<distributionManagement>
+<!--	<distributionManagement>
 		<snapshotRepository>
 			<id>oss</id>
 			<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
@@ -49,6 +49,13 @@
 		<repository>
 			<id>oss</id>
 			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+		</repository>
+	</distributionManagement>-->
+	<distributionManagement>
+		<repository>
+			<id>github</id>
+			<name>GitHub OWNER Apache Maven Packages</name>
+			<url>https://maven.pkg.github.com/darkice1/easy-biance</url>
 		</repository>
 	</distributionManagement>
 	<profiles>
@@ -153,21 +160,6 @@
 				</executions>
 			</plugin>
 			<plugin>
-				<groupId>org.jetbrains.dokka</groupId>
-				<artifactId>dokka-maven-plugin</artifactId>
-				<version>1.4.10</version>
-				<executions>
-					<execution>
-						<phase>prepare-package</phase>
-						<goals>
-							<goal>dokka</goal>
-							<goal>javadoc</goal>
-							<goal>javadocJar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-gpg-plugin</artifactId>
 				<version>1.6</version>
@@ -201,7 +193,7 @@
 					</execution>
 				</executions>
 				<configuration>
-					<jvmTarget>1.8</jvmTarget>
+					<jvmTarget>17</jvmTarget>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -225,8 +217,8 @@
 					</execution>
 				</executions>
 				<configuration>
-					<source>8</source> <!-- 源代码使用的开发版本 -->
-					<target>8</target> <!-- 需要生成的目标class文件的编译版本 -->
+					<source>17</source> <!-- 源代码使用的开发版本 -->
+					<target>17</target> <!-- 需要生成的目标class文件的编译版本 -->
 					<encoding>UTF-8</encoding>
 				</configuration>
 			</plugin>
