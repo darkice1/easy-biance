@@ -119,6 +119,7 @@
 				<directory>src/</directory>
 				<excludes>
 					<exclude>**/*.java</exclude>
+					<exclude>**/*.kt</exclude>
 				</excludes>
 				<!-- 是否替换资源中的属性-->
 				<filtering>false</filtering>
