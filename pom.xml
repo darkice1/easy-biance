@@ -194,7 +194,7 @@
 					</execution>
 				</executions>
 				<configuration>
-					<jvmTarget>17</jvmTarget>
+					<jvmTarget>${java.version}</jvmTarget>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -218,8 +218,8 @@
 					</execution>
 				</executions>
 				<configuration>
-					<source>17</source> <!-- 源代码使用的开发版本 -->
-					<target>17</target> <!-- 需要生成的目标class文件的编译版本 -->
+					<source>${java.version}</source> <!-- 源代码使用的开发版本 -->
+					<target>${java.version}</target> <!-- 需要生成的目标class文件的编译版本 -->
 					<encoding>UTF-8</encoding>
 				</configuration>
 			</plugin>
