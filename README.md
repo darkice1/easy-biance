@@ -99,3 +99,15 @@ BianceClient.dailyUserRedemptionQuota()
 
 # 查询赚币活期产品列表
 BianceClient.simpleEarnFlexibleList()
+
+# 获取活期产品持仓
+BianceClient.simpleEarnFlexiblePosition()
+
+# 赚币账户信息
+BianceClient.simpleEarnAccount()
+
+# 申购活期产品 (TRADE)
+BianceClient.simpleEarnFlexibleSubscribe()
+
+# 赎回活期产品 (TRADE)
+BianceClient.simpleEarnFlexibleRedeem()

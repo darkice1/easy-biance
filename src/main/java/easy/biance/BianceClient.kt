@@ -451,6 +451,65 @@ class BianceClient(url: String?=null,key:String?=null,secret:String?=null) {
 		return request("/sapi/v1/simple-earn/flexible/list",map,true) as JSONObject
 	}
 
+	/**
+	 * 获取活期产品持仓
+	 * GET /sapi/v1/simple-earn/flexible/position
+	 */
+	fun simpleEarnFlexiblePosition(asset:String?=null,productId:String?=null,current:Long=1,size:Long=10):JSONObject
+	{
+		val map = HashMap<String,Any>()
+
+		addToMap(map,"asset",asset)
+		addToMap(map,"productId",productId)
+		addToMap(map,"current",current)
+		addToMap(map,"size",size)
+
+		return request("/sapi/v1/simple-earn/flexible/position",map,true) as JSONObject
+	}
+
+	/**
+	 * 赚币账户
+	 * GET /sapi/v1/simple-earn/account
+	 */
+	fun simpleEarnAccount():JSONObject
+	{
+		val map = HashMap<String,Any>()
+		return request("/sapi/v1/simple-earn/account",map,true) as JSONObject
+	}
+
+	/**
+	 * 申购活期产品
+	 * POST /sapi/v1/simple-earn/flexible/subscribe
+	 *
+	 */
+	fun simpleEarnFlexibleSubscribe(productId:String,amount:Double,autoSubscribe:Boolean=true,sourceAccount:Account=Account.SPOT):JSONObject
+	{
+		val map = HashMap<String,Any>()
+		addToMap(map,"productId",productId)
+		addToMap(map,"amount",amount)
+		addToMap(map,"autoSubscribe",autoSubscribe)
+		addToMap(map,"sourceAccount",sourceAccount)
+
+		return request("/sapi/v1/simple-earn/flexible/subscribe",map, ishmac = true, ispost = true) as JSONObject
+	}
+
+	/**
+	 * 赎回活期产品 (TRADE)
+	 * POST /sapi/v1/simple-earn/flexible/redeem
+	 *
+	 */
+	fun simpleEarnFlexibleRedeem(productId:String,redeemAll:Boolean=false,amount:Double,destAccount:Account=Account.SPOT):JSONObject
+	{
+		val map = HashMap<String,Any>()
+		addToMap(map,"productId",productId)
+		addToMap(map,"amount",amount)
+		addToMap(map,"redeemAll",redeemAll)
+		addToMap(map,"destAccount",destAccount)
+
+		return request("/sapi/v1/simple-earn/flexible/redeem",map, ishmac = true, ispost = true) as JSONObject
+
+	}
+
 /*	fun dailyPurchase(productId:String,amount:Double,recvWindow:Long?=null):JSONObject
 	{
 		val map = HashMap<String,Any>()

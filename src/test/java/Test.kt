@@ -1,9 +1,5 @@
 import easy.biance.BianceClient
-import easy.biance.enums.DailyRedemptionType
-import easy.biance.enums.Side
-import easy.biance.enums.Type
-import easy.util.EDate
-import net.sf.json.JSONObject
+import easy.biance.enums.Account
 
 /**
  * @Project：easy-biance
@@ -20,7 +16,7 @@ object Test {
 
 		val b = BianceClient()
 
-		println(b.time())
+//		println(b.time())
 //		println(b.exchangeInfo())
 //		println(b.klines("BTCUSDT"))
 // 		println(BianceClient.avgPrice("BTCUSDT"))
@@ -54,11 +50,17 @@ object Test {
 
 //		println(BianceClient.subaccountlist())
 //		println(BianceClient.dailyproductlist())
-		println(b.dailyUserLeftQuota("USDT001"))
+//		println(b.dailyUserLeftQuota("USDT001"))
 //		println(BianceClient.dailyPosition("USDT"))
 //		println(b.dailyUserRedemptionQuota("USDT001",DailyRedemptionType.FAST))
-		println(b.simpleEarnFlexibleList("USDT"))
+//		println(b.simpleEarnFlexibleList("USDT"))
 //		println(b.dailyPurchase("USDT001",0.01))
+		println(b.simpleEarnFlexiblePosition("USDT"))
+//		println(b.simpleEarnAccount())
+		println(b.simpleEarnFlexibleSubscribe("USDT001",0.1, autoSubscribe = false, sourceAccount = Account.SPOT))
+		println(b.simpleEarnFlexiblePosition("USDT"))
+		println(b.simpleEarnFlexibleRedeem("USDT001",false,0.1,Account.SPOT))
+		println(b.simpleEarnFlexiblePosition("USDT"))
 
 	}
 }
