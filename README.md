@@ -96,3 +96,6 @@ BianceClient.dailyPosition()
 
 # 币安宝获取用户当日活期可赎回余额
 BianceClient.dailyUserRedemptionQuota()
+
+# 查询赚币活期产品列表
+BianceClient.simpleEarnFlexibleList()

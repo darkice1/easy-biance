@@ -436,6 +436,21 @@ class BianceClient(url: String?=null,key:String?=null,secret:String?=null) {
 		return request("/sapi/v1/lending/daily/userRedemptionQuota",map,true) as JSONObject
 	}
 
+	/**
+	 * 查询赚币活期产品列表
+	 * GET /sapi/v1/simple-earn/flexible/list
+	 */
+	fun simpleEarnFlexibleList(asset:String?=null,current:Long=1,size:Long=10):JSONObject
+	{
+		val map = HashMap<String,Any>()
+
+		addToMap(map,"asset",asset)
+		addToMap(map,"current",current)
+		addToMap(map,"size",size)
+
+		return request("/sapi/v1/simple-earn/flexible/list",map,true) as JSONObject
+	}
+
 /*	fun dailyPurchase(productId:String,amount:Double,recvWindow:Long?=null):JSONObject
 	{
 		val map = HashMap<String,Any>()

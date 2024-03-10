@@ -20,9 +20,9 @@ object Test {
 
 		val b = BianceClient()
 
-//		println(BianceClient.time())
-//		println(BianceClient.exchangeInfo())
-//		println(BianceClient.klines("BTCUSDT"))
+		println(b.time())
+//		println(b.exchangeInfo())
+//		println(b.klines("BTCUSDT"))
 // 		println(BianceClient.avgPrice("BTCUSDT"))
 //		println(BianceClient.tickerPrice())
 //		println(BianceClient.bookPrice())
@@ -32,7 +32,7 @@ object Test {
 */
 //		println(BianceClient.order(symbol = "BTCUSDT",side = Side.BUY,type=Type.MARKET, quantity = 1.0))
 
-//		println(BianceClient.allOrders("BTCUSDT"))
+//		println(b.allOrders("BTCUSDT"))
 //		println(BianceClient.account())
 //		println(BianceClient.myTrades("BTCUSDT"))
 //		println(BianceClient.orderTest(symbol = "BTCUSDT",side = Side.BUY,type= Type.MARKET, quantity = 1.0))
@@ -54,9 +54,10 @@ object Test {
 
 //		println(BianceClient.subaccountlist())
 //		println(BianceClient.dailyproductlist())
-//		println(BianceClient.dailyUserLeftQuota("USDT001"))
+		println(b.dailyUserLeftQuota("USDT001"))
 //		println(BianceClient.dailyPosition("USDT"))
-		println(b.dailyUserRedemptionQuota("USDT001",DailyRedemptionType.FAST))
+//		println(b.dailyUserRedemptionQuota("USDT001",DailyRedemptionType.FAST))
+		println(b.simpleEarnFlexibleList("USDT"))
 //		println(b.dailyPurchase("USDT001",0.01))
 
 	}
