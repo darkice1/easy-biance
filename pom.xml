@@ -112,19 +112,33 @@
 	</dependencies>
 
 	<build>
-		<sourceDirectory>src</sourceDirectory>
-		<directory>${basedir}/bin</directory>
+		<sourceDirectory>${basedir}/src/main/java</sourceDirectory>
 		<resources>
 			<resource>
-				<directory>src/</directory>
-				<excludes>
-					<exclude>**/*.java</exclude>
-					<exclude>**/*.kt</exclude>
-				</excludes>
-				<!-- 是否替换资源中的属性-->
-				<filtering>false</filtering>
+				<directory>${basedir}/src/main/resources</directory>
 			</resource>
 		</resources>
+		<!-- 测试源代码目录 -->
+		<testSourceDirectory>${basedir}/src/test/java</testSourceDirectory>
+		<testResources>
+			<testResource>
+				<directory>${basedir}/src/test/resources</directory>
+			</testResource>
+		</testResources>
+<!--		<outputDirectory>${basedir}/bin</outputDirectory>-->
+<!--		<sourceDirectory>src1</sourceDirectory>-->
+<!--		<directory>${basedir}/bin</directory>-->
+<!--		<resources>-->
+<!--			<resource>-->
+<!--				<directory>src1/</directory>-->
+<!--				<excludes>-->
+<!--					<exclude>**/*.java</exclude>-->
+<!--					<exclude>**/*.kt</exclude>-->
+<!--				</excludes>-->
+<!--				&lt;!&ndash; 是否替换资源中的属性&ndash;&gt;-->
+<!--				<filtering>false</filtering>-->
+<!--			</resource>-->
+<!--		</resources>-->
 
 		<plugins>
 			<plugin>
@@ -201,7 +215,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.1</version>
+				<version>3.11.0</version>
 				<executions>
 					<execution>
 						<id>compile</id>
