@@ -1,5 +1,7 @@
 package easy.biance
 
+import com.binance.connector.client.SpotClient
+import com.binance.connector.client.impl.SpotClientImpl
 import easy.biance.enums.*
 import easy.config.Config
 import easy.io.EHttpClient
@@ -21,11 +23,25 @@ import java.math.BigDecimal
  * @Modified By:
  */
 class BianceClient(url: String?=null,key:String?=null,secret:String?=null) {
-	private val url: String = url?:Config.getProperty("BIANCE_URL")
-	private val key = key?:Config.getProperty("BIANCE_KEY")
-	private val secret: String = secret?:Config.getProperty("BIANCE_SECRET")
+	private val url: String by lazy {
+		url?:Config.getProperty("BIANCE_URL")
+	}
+
+	private val key by lazy {
+		key ?: Config.getProperty("BIANCE_KEY")
+	}
+
+	private val secret by lazy {
+		secret ?: Config.getProperty("BIANCE_SECRET")
+	}
+
 
 	private val client = EHttpClient()
+	private val sclient: SpotClient by lazy {
+//		println("key:$key secret:$secret")
+		SpotClientImpl(key ?: Config.getProperty("BIANCE_KEY"),secret?: Config.getProperty("BIANCE_SECRET"))
+	}
+
 
 	private fun mapToUrl(map:HashMap<String,Any>):String{
 		val buf = StringBuilder()
@@ -62,13 +78,12 @@ class BianceClient(url: String?=null,key:String?=null,secret:String?=null) {
 			val post = HashMap<String,String>()
 			if (ishmac)
 			{
-//			println(rbody)
-//			surl = "$surl&signature=${signature(rbody)}"
+
+				surl = "$surl?$rbody&signature=${signature(rbody)}"
 				head["X-MBX-APIKEY"] = key
 
 				post[""] = "$rbody&signature=${signature(rbody)}"
 			}
-
 //			println("$surl $post $head")
 
 			client.postToString(surl,post,head)
@@ -392,7 +407,6 @@ class BianceClient(url: String?=null,key:String?=null,secret:String?=null) {
 		val map = HashMap<String,Any>()
 		addToMap(map,"status",status)
 		addToMap(map,"featured",featured)
-		addToMap(map,"current",current)
 		addToMap(map,"size",size)
 		addToMap(map,"recvWindow",recvWindow)
 
@@ -489,8 +503,12 @@ class BianceClient(url: String?=null,key:String?=null,secret:String?=null) {
 		addToMap(map,"amount",amount)
 		addToMap(map,"autoSubscribe",autoSubscribe)
 		addToMap(map,"sourceAccount",sourceAccount)
+//		val sresult = sclient.createSimpleEarn().subscribeFlexibleProduct(map)
+//		println(sresult)
+
 
 		return request("/sapi/v1/simple-earn/flexible/subscribe",map, ishmac = true, ispost = true) as JSONObject
+//		return  JSONObject.fromObject(sresult)
 	}
 
 	/**

@@ -1,5 +1,7 @@
+import com.binance.connector.client.utils.RequestHandler
 import easy.biance.BianceClient
 import easy.biance.enums.Account
+import org.slf4j.LoggerFactory
 
 /**
  * @Project：easy-biance
@@ -56,11 +58,19 @@ object Test {
 //		println(b.simpleEarnFlexibleList("USDT"))
 //		println(b.dailyPurchase("USDT001",0.01))
 		println(b.simpleEarnFlexiblePosition("USDT"))
-//		println(b.simpleEarnAccount())
-		println(b.simpleEarnFlexibleSubscribe("USDT001",0.1, autoSubscribe = false, sourceAccount = Account.SPOT))
+////		println(b.simpleEarnAccount())
+////		sleep(5000)
+		println(b.simpleEarnFlexibleSubscribe("USDT001",1.0, autoSubscribe = false, sourceAccount = Account.SPOT))
 		println(b.simpleEarnFlexiblePosition("USDT"))
-		println(b.simpleEarnFlexibleRedeem("USDT001",false,0.1,Account.SPOT))
+		println(b.simpleEarnFlexibleRedeem("USDT001",false,1.0, Account.SPOT))
 		println(b.simpleEarnFlexiblePosition("USDT"))
+//		val logger = LoggerFactory.getLogger("ss")
+//		println(Test::class.java)
+//		val logger = LoggerFactory.getLogger(Test::class.java)
+//		println("Before logging")
+//		logger.info("Test log")
+//		println("After logging")
+
 
 	}
 }
