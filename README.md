@@ -97,17 +97,22 @@ BianceClient.dailyPosition()
 # 币安宝获取用户当日活期可赎回余额
 BianceClient.dailyUserRedemptionQuota()
 
-# 查询赚币活期产品列表
+# 查询赚币活期产品列表 
+https://binance-docs.github.io/apidocs/spot/cn/#user_data-65
 BianceClient.simpleEarnFlexibleList()
 
-# 获取活期产品持仓
+# 获取活期产品持仓(USER_DATA)
+https://binance-docs.github.io/apidocs/spot/cn/#user_data-67
 BianceClient.simpleEarnFlexiblePosition()
 
-# 赚币账户信息
+# 赚币账户(USER_DATA)
+https://binance-docs.github.io/apidocs/spot/cn/#user_data-69
 BianceClient.simpleEarnAccount()
 
-# 申购活期产品 (TRADE)
+# 申购定期产品(TRADE)
+https://binance-docs.github.io/apidocs/spot/cn/#trade-15
 BianceClient.simpleEarnFlexibleSubscribe()
 
 # 赎回活期产品 (TRADE)
+https://binance-docs.github.io/apidocs/spot/cn/#trade-16
 BianceClient.simpleEarnFlexibleRedeem()
