@@ -11,6 +11,7 @@ import net.sf.json.JSON
 import net.sf.json.JSONArray
 import net.sf.json.JSONObject
 import java.math.BigDecimal
+import java.util.TreeMap
 
 
 /**
@@ -43,7 +44,7 @@ class BianceClient(url: String?=null,key:String?=null,secret:String?=null) {
 	}
 
 
-	private fun mapToUrl(map:HashMap<String,Any>):String{
+	private fun mapToUrl(map:MutableMap<String,Any>):String{
 		val buf = StringBuilder()
 		map.forEach { (k, v) ->
 			buf.append("$k=${java.net.URLEncoder.encode(v.toString(),"utf-8")}&")
@@ -56,8 +57,7 @@ class BianceClient(url: String?=null,key:String?=null,secret:String?=null) {
 		return buf.toString()
 	}
 
-	private fun request(funname:String, body:HashMap<String,Any>?,ishmac:Boolean=false,ispost:Boolean=false): JSON {
-
+	private fun request(funname:String, body:MutableMap<String,Any>?,ishmac:Boolean=false,ispost:Boolean=false): JSON {
 		val b = body ?: HashMap()
 		if (ishmac)
 		{
@@ -78,13 +78,16 @@ class BianceClient(url: String?=null,key:String?=null,secret:String?=null) {
 			val post = HashMap<String,String>()
 			if (ishmac)
 			{
+				val signature = signature(rbody)
+//				println("$surl ### $rbody ### $signature")
 
-				surl = "$surl?$rbody&signature=${signature(rbody)}"
+				surl = "$surl?$rbody&signature=$signature"
+//				surl = "$surl?signature=$signature"
 				head["X-MBX-APIKEY"] = key
 
-				post[""] = "$rbody&signature=${signature(rbody)}"
+//				post[""] = "$rbody&signature=$signature"
 			}
-//			println("$surl $post $head")
+//			println("surl:$surl\npost:$post\nhead:$head")
 
 			client.postToString(surl,post,head)
 		}
@@ -199,7 +202,7 @@ class BianceClient(url: String?=null,key:String?=null,secret:String?=null) {
 		return request("/api/v3/ticker/bookTicker",map)
 	}
 
-	private fun addToMap(map:HashMap<String,Any>, name:String, value:Any?)
+	private fun addToMap(map:MutableMap<String,Any>, name:String, value:Any?)
 	{
 		if (value != null)
 		{
@@ -359,6 +362,8 @@ class BianceClient(url: String?=null,key:String?=null,secret:String?=null) {
 		addToMap(map,"newClientOrderId",newClientOrderId)
 		addToMap(map,"recvWindow",recvWindow)
 
+//		val d = sclient.createTrade().testNewOrder(map)
+//		println(d)
 
 		return if (isTest)
 		{

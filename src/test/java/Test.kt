@@ -1,7 +1,5 @@
-import com.binance.connector.client.utils.RequestHandler
 import easy.biance.BianceClient
 import easy.biance.enums.Account
-import org.slf4j.LoggerFactory
 
 /**
  * @Project：easy-biance
@@ -41,14 +39,15 @@ object Test {
 //		println(BianceClient.aggTrades("BTCUSDT"))
 //		println(BianceClient.hr24("BTCUSDT"))
 //		println(BianceClient.findorder("BTCUSDT",1))
-//		val num = 100.0
-//		val usd = num*0.149479
+		val num = 100.0
+		val usd = num*0.149479
 //		val snum = getCnyToSymbolPrint("BTCUSDT",num)
 //		println(snum)
 
 //		val newClientOrderId = "TEST_${EDate().toString().replace(":","").replace(" ","")}"
-//		val json = BianceClient.orderTest(symbol = "BTCUSDT",side = Side.BUY,type= Type.MARKET,newClientOrderId=newClientOrderId,
-//			quantity = snum)
+//		val json = b.orderTest(symbol = "BTCUSDT",side = Side.BUY,type= Type.MARKET,newClientOrderId=newClientOrderId,
+//			quantity = 0.1)
+//		println(json)
 
 //		println(BianceClient.subaccountlist())
 //		println(BianceClient.dailyproductlist())

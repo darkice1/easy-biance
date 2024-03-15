@@ -64,16 +64,20 @@ BianceClient.tickerPrice()
 # 最优挂单接口
 BianceClient.bookPrice()
 
-# 下单接口
+# 下单 (TRADE)
+https://binance-docs.github.io/apidocs/spot/cn/#trade-3
 BianceClient.order()
 
-# 测试下单接口
+# 测试下单 (TRADE)
+https://binance-docs.github.io/apidocs/spot/cn/#trade-2
 BianceClient.orderTest()
 
-# 查看账户当前挂单
+# 当前挂单 (USER_DATA)
+https://binance-docs.github.io/apidocs/spot/cn/#user_data-35
 BianceClient.openOrders()
 
-# 获取所有订单信息
+# 查询所有订单 (USER_DATA)
+https://binance-docs.github.io/apidocs/spot/cn/#user_data-36
 BianceClient.allOrders()
 
 # 获取账户信息
