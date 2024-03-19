@@ -39,7 +39,7 @@
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
 		<maven.compiler.compilerVersion>${java.version}</maven.compiler.compilerVersion>
-		<javadocExecutable>${java.home}/../bin/javadoc</javadocExecutable>
+		<javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
 		<kotlin.version>1.9.20</kotlin.version>
 	</properties>
 	<distributionManagement>
@@ -185,6 +185,22 @@
 				</executions>
 			</plugin>
 			<plugin>
+				<!-- 为kotlin发布文档使用方便发布 -->
+				<groupId>org.jetbrains.dokka</groupId>
+				<artifactId>dokka-maven-plugin</artifactId>
+				<version>${kotlin.version}</version>
+				<executions>
+					<execution>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>dokka</goal>
+							<goal>javadoc</goal>
+							<goal>javadocJar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
 				<version>3.2.1</version>
@@ -238,6 +254,13 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.11.0</version>
+				<configuration>
+				<encoding>UTF-8</encoding>
+				<release>${java.version}</release> <!-- 或您使用的 JDK 版本 -->
+				<compilerArgs>
+					<arg>--add-opens=jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED</arg>
+				</compilerArgs>
+				</configuration>
 				<executions>
 					<execution>
 						<id>compile</id>
@@ -254,11 +277,6 @@
 						</goals>
 					</execution>
 				</executions>
-				<configuration>
-					<source>${java.version}</source> <!-- 源代码使用的开发版本 -->
-					<target>${java.version}</target> <!-- 需要生成的目标class文件的编译版本 -->
-					<encoding>UTF-8</encoding>
-				</configuration>
 			</plugin>
 		</plugins>
 	</build>
