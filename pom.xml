@@ -42,7 +42,7 @@
 		<javadocExecutable>${java.home}/../bin/javadoc</javadocExecutable>
 		<kotlin.version>1.9.20</kotlin.version>
 	</properties>
-<!--	<distributionManagement>
+	<distributionManagement>
 		<snapshotRepository>
 			<id>oss</id>
 			<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
@@ -51,14 +51,14 @@
 			<id>oss</id>
 			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
 		</repository>
-	</distributionManagement>-->
-	<distributionManagement>
+	</distributionManagement>
+<!--	<distributionManagement>
 		<repository>
 			<id>github</id>
 			<name>GitHub OWNER Apache Maven Packages</name>
 			<url>https://maven.pkg.github.com/darkice1/easy-biance</url>
 		</repository>
-	</distributionManagement>
+	</distributionManagement>-->
 	<profiles>
 		<profile>
 			<id>oss</id>
