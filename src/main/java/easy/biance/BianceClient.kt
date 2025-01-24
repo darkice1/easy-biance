@@ -11,7 +11,6 @@ import net.sf.json.JSON
 import net.sf.json.JSONArray
 import net.sf.json.JSONObject
 import java.math.BigDecimal
-import java.util.TreeMap
 
 
 /**
@@ -23,24 +22,13 @@ import java.util.TreeMap
  * @Description:
  * @Modified By:
  */
-class BianceClient(url: String?=null,key:String?=null,secret:String?=null) {
-	private val url: String by lazy {
-		url?:Config.getProperty("BIANCE_URL")
-	}
-
-	private val key by lazy {
-		key ?: Config.getProperty("BIANCE_KEY")
-	}
-
-	private val secret by lazy {
-		secret ?: Config.getProperty("BIANCE_SECRET")
-	}
-
-
+class BianceClient(private val url: String=Config.getProperty("BIANCE_URL")!!,
+                   private val key:String=Config.getProperty("BIANCE_KEY")!!,
+                   private val secret:String=Config.getProperty("BIANCE_SECRET")!!) {
 	private val client = EHttpClient()
 	private val sclient: SpotClient by lazy {
 //		println("key:$key secret:$secret")
-		SpotClientImpl(key ?: Config.getProperty("BIANCE_KEY"),secret?: Config.getProperty("BIANCE_SECRET"))
+		SpotClientImpl(key, secret)
 	}
 
 
@@ -143,7 +131,8 @@ class BianceClient(url: String?=null,key:String?=null,secret:String?=null) {
 
 
 	private fun signature(msg: String): String {
-		return Format.byte2hex(Format.HMACSha256(secret,msg))
+//		return Format.byte2hex(Format.HMACSha256(secret,msg))
+		return Format.byte2hex(Format.hmacSha256(secret,msg))
 	}
 
 
@@ -343,10 +332,11 @@ class BianceClient(url: String?=null,key:String?=null,secret:String?=null) {
 		return order(symbol,side,type, timeInForce, quantity, quoteOrderQty, price, newClientOrderId, stopPrice, icebergQty, newOrderRespType, recvWindow,true)
 	}
 
+	@Suppress("MemberVisibilityCanBePrivate")
 	fun order(symbol:String, side:Side, type:Type, timeInForce:TimeInForce?=null,
-	          quantity:Double,quoteOrderQty:Double?=null, price:Double?=null, newClientOrderId:String?=null,
+	          quantity:Double, quoteOrderQty:Double?=null, price:Double?=null, newClientOrderId:String?=null,
 	          stopPrice:Double?=null, icebergQty:Double?=null, newOrderRespType:NewOrderRespType?=null,
-	          recvWindow:Long?=null,isTest:Boolean=true):JSON{
+	          recvWindow:Long?=null, isTest:Boolean=true):JSON{
 		val map = HashMap<String,Any>()
 		map["symbol"] = symbol
 		map["side"] = side
@@ -407,7 +397,8 @@ class BianceClient(url: String?=null,key:String?=null,secret:String?=null) {
 	/**
 	 * 币安宝获取活期产品列表
 	 */
-	fun dailyProductList(status:DailyProductStatus?=null,featured:String?=null,current:Long?=null,size:Long?=null,recvWindow:Long?=null):JSONArray
+	@Suppress("UNUSED_PARAMETER")
+	fun dailyProductList(status:DailyProductStatus?=null, featured:String?=null, current:Long?=null, size:Long?=null, recvWindow:Long?=null):JSONArray
 	{
 		val map = HashMap<String,Any>()
 		addToMap(map,"status",status)

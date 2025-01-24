@@ -32,7 +32,7 @@
         <groupId>com.neo</groupId>
     -->
 	<artifactId>easy-biance</artifactId>
-	<version>1.0.7</version>
+	<version>1.0.71</version>
 	<packaging>jar</packaging>
 	<properties>
 		<java.version>21</java.version>
@@ -96,7 +96,7 @@
 		<dependency>
 			<groupId>com.github.darkice1</groupId>
 			<artifactId>easy</artifactId>
-			<version>1.0.52</version>
+			<version>1.0.78</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jetbrains.kotlin</groupId>
