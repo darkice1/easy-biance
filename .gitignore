@@ -3,3 +3,6 @@ target/
 bin
 .idea/
 *.iml
+build
+.kotlin
+.gradle

@@ -7,10 +7,11 @@ import easy.config.Config
 import easy.io.EHttpClient
 import easy.util.Format
 import easy.util.Log
-import net.sf.json.JSON
-import net.sf.json.JSONArray
-import net.sf.json.JSONObject
+import org.json.JSONArray
+import org.json.JSONObject
+
 import java.math.BigDecimal
+import java.math.RoundingMode
 
 
 /**
@@ -102,16 +103,15 @@ class BianceClient(private val url: String=Config.getProperty("BIANCE_URL")!!,
 		}*/
 //		println(resp)
 		return try {
-			if (resp.indexOf("{") == 0) {
-				JSONObject.fromObject(resp)
+			if (resp.startsWith("{")) {
+				ToJSONObject(JSONObject(resp))
 			} else {
-				JSONArray.fromObject(resp)
+				ToJSONArray(JSONArray(resp))
 			}
-		}
-		catch (e:Exception)
-		{
-			Log.OutException(e,"[$url]response:[$resp]")
-			JSONObject()
+		} catch (e: Exception) {
+			Log.OutException(e, "[$url]response:[$resp]")
+			// 根据你业务场景决定返回什么；这里给个空对象
+			ToJSONObject(JSONObject())
 		}
 	}
 
@@ -199,8 +199,7 @@ class BianceClient(private val url: String=Config.getProperty("BIANCE_URL")!!,
 			val cname = value.javaClass.name
 			if (cname == "java.lang.Double")
 			{
-				map[name] = BigDecimal(value as Double).setScale(6,BigDecimal.ROUND_HALF_UP)
-//				println("#### $map")
+				map[name] = BigDecimal.valueOf(value as Double).setScale(6, RoundingMode.HALF_UP)
 			}
 			else
 			{
@@ -269,7 +268,8 @@ class BianceClient(private val url: String=Config.getProperty("BIANCE_URL")!!,
 	/**
 	 * 近期成交(归集)
 	 */
-	fun aggTrades(symbol:String,fromId: Long?=null,startTime:Long?=null,endTime:Long?=null,limit:Int=500):JSON
+	@Suppress("DuplicatedCode")
+	fun aggTrades(symbol:String, fromId: Long?=null, startTime:Long?=null, endTime:Long?=null, limit:Int=500):JSON
 	{
 		val map = HashMap<String,Any>()
 		addToMap(map,"symbol",symbol)
@@ -283,7 +283,8 @@ class BianceClient(private val url: String=Config.getProperty("BIANCE_URL")!!,
 	/**
 	 * 账户成交历史
 	 */
-	fun myTrades(symbol:String,startTime:Long?=null,endTime:Long?=null,fromId:Long?=null,limit:Int=500,recvWindow:Long?=null):JSON
+	@Suppress("DuplicatedCode")
+	fun myTrades(symbol:String, startTime:Long?=null, endTime:Long?=null, fromId:Long?=null, limit:Int=500, recvWindow:Long?=null):JSON
 	{
 		val map = HashMap<String,Any>()
 		addToMap(map,"symbol",symbol)
