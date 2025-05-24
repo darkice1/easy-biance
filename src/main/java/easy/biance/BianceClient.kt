@@ -126,7 +126,7 @@ class BianceClient(private val url: String=Config.getProperty("BIANCE_URL")!!,
 	 * 交易规范信息
 	 */
 	fun exchangeInfo():JSONObject{
-		return request("/api/v3/exchangeInfo",null) as JSONObject
+		return request("/api/v3/exchangeInfo",null).asJSONObject()!!
 	}
 
 
@@ -154,7 +154,7 @@ class BianceClient(private val url: String=Config.getProperty("BIANCE_URL")!!,
 
 		map["limit"] = limit
 
-		return request("/api/v3/klines",map) as JSONArray
+		return request("/api/v3/klines",map).asJSONArray()!!
 	}
 
 	fun hr24(symbol:String?=null):JSON{
@@ -171,7 +171,7 @@ class BianceClient(private val url: String=Config.getProperty("BIANCE_URL")!!,
 		val map = HashMap<String,Any>()
 		map["symbol"] = symbol
 
-		return request("/api/v3/avgPrice",map) as JSONObject
+		return request("/api/v3/avgPrice",map).asJSONObject()!!
 	}
 
 	fun tickerPrice(symbol:String?=null):JSON{
@@ -211,12 +211,12 @@ class BianceClient(private val url: String=Config.getProperty("BIANCE_URL")!!,
 	/**
 	 * 账户信息 (USER_DATA)
 	 */
-	fun account(recvWindow:Long?=null):JSON
+	fun account(recvWindow:Long?=null): JSONObject
 	{
 		val map = HashMap<String,Any>()
 		addToMap(map,"recvWindow",recvWindow)
 
-		return request("/api/v3/account",map,true)
+		return request("/api/v3/account",map,true).asJSONObject()!!
 	}
 
 	/**
@@ -284,7 +284,7 @@ class BianceClient(private val url: String=Config.getProperty("BIANCE_URL")!!,
 	 * 账户成交历史
 	 */
 	@Suppress("DuplicatedCode")
-	fun myTrades(symbol:String, startTime:Long?=null, endTime:Long?=null, fromId:Long?=null, limit:Int=500, recvWindow:Long?=null):JSON
+	fun myTrades(symbol:String, startTime:Long?=null, endTime:Long?=null, fromId:Long?=null, limit:Int=500, recvWindow:Long?=null): JSONArray
 	{
 		val map = HashMap<String,Any>()
 		addToMap(map,"symbol",symbol)
@@ -294,7 +294,7 @@ class BianceClient(private val url: String=Config.getProperty("BIANCE_URL")!!,
 		addToMap(map,"limit",limit)
 		addToMap(map,"recvWindow",recvWindow)
 
-		return request("/api/v3/myTrades",map,true)
+		return request("/api/v3/myTrades",map,true).asJSONArray()!!
 	}
 
 	/**
@@ -407,7 +407,7 @@ class BianceClient(private val url: String=Config.getProperty("BIANCE_URL")!!,
 		addToMap(map,"size",size)
 		addToMap(map,"recvWindow",recvWindow)
 
-		return request("/sapi/v1/lending/daily/product/list",map,true) as JSONArray
+		return request("/sapi/v1/lending/daily/product/list",map,true).asJSONArray()!!
 	}
 
 	/**
@@ -419,7 +419,7 @@ class BianceClient(private val url: String=Config.getProperty("BIANCE_URL")!!,
 		addToMap(map,"productId",productId)
 		addToMap(map,"recvWindow",recvWindow)
 
-		return request("/sapi/v1/lending/daily/userLeftQuota",map,true) as JSONObject
+		return request("/sapi/v1/lending/daily/userLeftQuota",map,true).asJSONObject()!!
 	}
 
 	/**
@@ -431,7 +431,7 @@ class BianceClient(private val url: String=Config.getProperty("BIANCE_URL")!!,
 		addToMap(map,"asset",asset)
 		addToMap(map,"recvWindow",recvWindow)
 
-		return request("/sapi/v1/lending/daily/token/position",map,true) as JSONArray
+		return request("/sapi/v1/lending/daily/token/position",map,true).asJSONArray()!!
 	}
 
 	/**
@@ -444,7 +444,7 @@ class BianceClient(private val url: String=Config.getProperty("BIANCE_URL")!!,
 		addToMap(map,"type",type)
 		addToMap(map,"recvWindow",recvWindow)
 
-		return request("/sapi/v1/lending/daily/userRedemptionQuota",map,true) as JSONObject
+		return request("/sapi/v1/lending/daily/userRedemptionQuota",map,true).asJSONObject()!!
 	}
 
 	/**
@@ -459,7 +459,7 @@ class BianceClient(private val url: String=Config.getProperty("BIANCE_URL")!!,
 		addToMap(map,"current",current)
 		addToMap(map,"size",size)
 
-		return request("/sapi/v1/simple-earn/flexible/list",map,true) as JSONObject
+		return request("/sapi/v1/simple-earn/flexible/list",map,true).asJSONObject()!!
 	}
 
 	/**
@@ -475,7 +475,7 @@ class BianceClient(private val url: String=Config.getProperty("BIANCE_URL")!!,
 		addToMap(map,"current",current)
 		addToMap(map,"size",size)
 
-		return request("/sapi/v1/simple-earn/flexible/position",map,true) as JSONObject
+		return request("/sapi/v1/simple-earn/flexible/position",map,true).asJSONObject()!!
 	}
 
 	/**
@@ -485,7 +485,7 @@ class BianceClient(private val url: String=Config.getProperty("BIANCE_URL")!!,
 	fun simpleEarnAccount():JSONObject
 	{
 		val map = HashMap<String,Any>()
-		return request("/sapi/v1/simple-earn/account",map,true) as JSONObject
+		return request("/sapi/v1/simple-earn/account",map,true).asJSONObject()!!
 	}
 
 	/**
@@ -504,7 +504,7 @@ class BianceClient(private val url: String=Config.getProperty("BIANCE_URL")!!,
 //		println(sresult)
 
 
-		return request("/sapi/v1/simple-earn/flexible/subscribe",map, ishmac = true, ispost = true) as JSONObject
+		return request("/sapi/v1/simple-earn/flexible/subscribe",map, ishmac = true, ispost = true).asJSONObject()!!
 //		return  JSONObject.fromObject(sresult)
 	}
 
@@ -521,7 +521,7 @@ class BianceClient(private val url: String=Config.getProperty("BIANCE_URL")!!,
 		addToMap(map,"redeemAll",redeemAll)
 		addToMap(map,"destAccount",destAccount)
 
-		return request("/sapi/v1/simple-earn/flexible/redeem",map, ishmac = true, ispost = true) as JSONObject
+		return request("/sapi/v1/simple-earn/flexible/redeem",map, ishmac = true, ispost = true).asJSONObject()!!
 
 	}
 
