@@ -319,7 +319,7 @@ class BianceClient(private val url: String=Config.getProperty("BIANCE_URL")!!,
 	fun order(symbol:String, side:Side, type:Type, timeInForce:TimeInForce?=null,
 	          quantity:Double,quoteOrderQty:Double?=null, price:Double?=null, newClientOrderId:String?=null,
 	          stopPrice:Double?=null, icebergQty:Double?=null, newOrderRespType:NewOrderRespType?=null,
-	          recvWindow:Long?=null):JSON{
+	          recvWindow:Long?=null): JSONObject{
 		return order(symbol,side,type, timeInForce, quantity, quoteOrderQty, price, newClientOrderId, stopPrice, icebergQty, newOrderRespType, recvWindow,false)
 	}
 
@@ -329,7 +329,7 @@ class BianceClient(private val url: String=Config.getProperty("BIANCE_URL")!!,
 	fun orderTest(symbol:String, side:Side, type:Type, timeInForce:TimeInForce?=null,
 	          quantity:Double,quoteOrderQty:Double?=null, price:Double?=null, newClientOrderId:String?=null,
 	          stopPrice:Double?=null, icebergQty:Double?=null, newOrderRespType:NewOrderRespType?=null,
-	          recvWindow:Long?=null):JSON{
+	          recvWindow:Long?=null): JSONObject{
 		return order(symbol,side,type, timeInForce, quantity, quoteOrderQty, price, newClientOrderId, stopPrice, icebergQty, newOrderRespType, recvWindow,true)
 	}
 
@@ -337,7 +337,7 @@ class BianceClient(private val url: String=Config.getProperty("BIANCE_URL")!!,
 	fun order(symbol:String, side:Side, type:Type, timeInForce:TimeInForce?=null,
 	          quantity:Double, quoteOrderQty:Double?=null, price:Double?=null, newClientOrderId:String?=null,
 	          stopPrice:Double?=null, icebergQty:Double?=null, newOrderRespType:NewOrderRespType?=null,
-	          recvWindow:Long?=null, isTest:Boolean=true):JSON{
+	          recvWindow:Long?=null, isTest:Boolean=true): JSONObject{
 		val map = HashMap<String,Any>()
 		map["symbol"] = symbol
 		map["side"] = side
@@ -358,11 +358,11 @@ class BianceClient(private val url: String=Config.getProperty("BIANCE_URL")!!,
 
 		return if (isTest)
 		{
-			request("/api/v3/order/test",map,true,ispost = true)
+			request("/api/v3/order/test",map,true,ispost = true).asJSONObject()!!
 		}
 		else
 		{
-			request("/api/v3/order",map,true,ispost = true)
+			request("/api/v3/order",map,true,ispost = true).asJSONObject()!!
 		}
 	}
 
