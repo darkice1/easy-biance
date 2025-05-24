@@ -3,36 +3,41 @@ package easy.biance
 import org.json.JSONArray
 import org.json.JSONObject
 
-/** 所有 JSON 封装的共同接口 */
-sealed interface JSON {
-	/** 原生对象，方便偶尔直接透传 */
-	val raw: Any
-}
+sealed class JSON(open val raw: Any) {
 
-@JvmInline     // Kotlin >= 1.5，可省掉 data-class 的额外开销
-value class ToJSONObject(val value: JSONObject) : JSON {
-	override val raw get() = value
-}
+    /** JSONObject 封装 */
+    data class Obj(val obj: JSONObject) : JSON(obj)
 
-@JvmInline
-value class ToJSONArray(val value: JSONArray) : JSON {
-	override val raw get() = value
-}
+    /** JSONArray 封装 */
+    data class Arr(val arr: JSONArray) : JSON(arr)
 
-/**
- * 尝试将封装类型转为 `JSONArray`。
- * 仅当自身就是 `ToJSONArray` 时返回对应值；否则返回 null。
- */
-fun JSON.asJSONArray(): JSONArray? = when (this) {
-    is ToJSONArray -> this.value
-    else           -> null
-}
+    /* ---------- 类型安全的访问函数 ---------- */
 
-/**
- * 尝试将封装类型转为 `JSONObject`。
- * 仅当自身就是 `ToJSONObject` 时返回对应值；否则返回 null。
- */
-fun JSON.asJSONObject(): JSONObject? = when (this) {
-    is ToJSONObject -> this.value
-    else            -> null
+    /** 转成 JSONObject；若不是则抛异常 */
+    fun asJSONObject(): JSONObject =
+        (this as? Obj)?.obj ?: error("$raw 不是 JSONObject")
+
+    /** 转成 JSONArray；若不是则抛异常 */
+    fun asJSONArray(): JSONArray =
+        (this as? Arr)?.arr ?: error("$raw 不是 JSONArray")
+
+    /* ---------- 便捷属性 ---------- */
+
+    /** 判断是否为 JSONObject */
+    val isObj get() = this is Obj
+
+    /** 判断是否为 JSONArray */
+    val isArr get() = this is Arr
+
+    /* ---------- 统一工厂 ---------- */
+
+    companion object {
+        operator fun invoke(any: Any): JSON =
+            when (any) {
+                is JSONObject -> Obj(any)
+                is JSONArray -> Arr(any)
+                else -> error("$any 既不是 JSONObject 也不是 JSONArray")
+                }
+        }
+
 }
