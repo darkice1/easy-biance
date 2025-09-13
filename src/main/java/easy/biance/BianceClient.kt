@@ -534,4 +534,38 @@ class BianceClient(private val url: String=Config.getProperty("BIANCE_URL")!!,
 
 		return request("/sapi/v1/lending/daily/purchase",map, ishmac = true, ispost = true) as JSONObject
 	}*/
+
+    /**
+     * 提币历史 (USER_DATA)
+     * GET /sapi/v1/capital/withdraw/history
+     * 文档: https://developers.binance.com/docs/zh-CN/wallet/capital/withdraw-history
+     *
+     * @param coin 币种(可选)
+     * @param status 状态(可选) 0:Email Sent, 1:Cancelled, 2:Awaiting Approval, 3:Rejected, 4:Processing, 5:Failure, 6:Completed
+     * @param startTime 开始时间(毫秒, 可选)
+     * @param endTime 结束时间(毫秒, 可选)
+     * @param offset 分页偏移(可选)
+     * @param limit 返回条数(默认1000, 最大1000)
+     * @param recvWindow 可选
+     */
+    fun withdrawHistory(
+        coin: String? = null,
+        status: Int? = null,
+        startTime: Long? = null,
+        endTime: Long? = null,
+        offset: Int? = null,
+        limit: Int? = 1000,
+        recvWindow: Long? = null
+    ): JSONArray {
+        val map = HashMap<String, Any>()
+        addToMap(map, "coin", coin)
+        addToMap(map, "status", status)
+        addToMap(map, "startTime", startTime)
+        addToMap(map, "endTime", endTime)
+        addToMap(map, "offset", offset)
+        addToMap(map, "limit", limit)
+        addToMap(map, "recvWindow", recvWindow)
+
+        return request("/sapi/v1/capital/withdraw/history", map, ishmac = true).asJSONArray()
+    }
 }

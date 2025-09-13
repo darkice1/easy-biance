@@ -9,7 +9,7 @@ plugins {
 }
 
 group   = "com.github.darkice1"
-version = "1.0.73"                                  // 与 pom.version 对齐
+version = "1.0.75"                                  // 与 pom.version 对齐
 
 val projectName = "easy-biance"
 val projectDesc = "Neo easy Biance SDK."
@@ -32,20 +32,20 @@ repositories {
 // ---------- 依赖 ----------
 dependencies {
 	// 自家核心库
-	api("com.github.darkice1:easy:1.0.81")
+	api("com.github.darkice1:easy:1.0.86")
 
 	// Kotlin & 测试
 	api(kotlin("stdlib"))            // 已涵盖 kotlin-stdlib-jdk8
 	testImplementation(kotlin("test"))
 
 	// Binance SDK
-	api("io.github.binance:binance-connector-java:3.2.0")
+	api("io.github.binance:binance-connector-java:3.4.1")
 //	// https://mvnrepository.com/artifact/com.alibaba.fastjson2/fastjson2
 
 	// Log4j 2
-	api("org.apache.logging.log4j:log4j-api:2.23.1")
+/*	api("org.apache.logging.log4j:log4j-api:2.23.1")
 	api("org.apache.logging.log4j:log4j-core:2.23.1")
-	api("org.apache.logging.log4j:log4j-slf4j-impl:2.23.1")
+	api("org.apache.logging.log4j:log4j-slf4j-impl:2.23.1")*/
 }
 
 // ---------- 编译/Javadoc ----------
