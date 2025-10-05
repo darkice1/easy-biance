@@ -176,7 +176,7 @@ class BianceClient(private val url: String=Config.getProperty("BIANCE_URL")!!,
 
 	fun tickerPrice(symbol:String?=null):JSON{
 		val map = HashMap<String,Any>()
-		addToMap(map,"symbol,",symbol)
+		addToMap(map,"symbol",symbol)
 
 		return request("/api/v3/ticker/price",map)
 	}
@@ -343,7 +343,7 @@ class BianceClient(private val url: String=Config.getProperty("BIANCE_URL")!!,
 		map["side"] = side
 		map["type"] = type
 
-		addToMap(map,"timeInForce,",timeInForce)
+		addToMap(map,"timeInForce",timeInForce)
 		addToMap(map,"quantity",quantity)
 		addToMap(map,"quoteOrderQty",quoteOrderQty)
 		addToMap(map,"price",price)

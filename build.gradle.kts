@@ -9,7 +9,7 @@ plugins {
 }
 
 group   = "com.github.darkice1"
-version = "1.0.75"                                  // 与 pom.version 对齐
+version = "1.0.76"                                  // 与 pom.version 对齐
 
 val projectName = "easy-biance"
 val projectDesc = "Neo easy Biance SDK."
@@ -130,6 +130,7 @@ tasks.register("release") {
 }
 
 nexusPublishing {
+	repositoryDescription.set("${project.group}.$projectName:${project.version}")
 	repositories {
 		sonatype {
 			// staging / snapshots 地址与示例保持一致
