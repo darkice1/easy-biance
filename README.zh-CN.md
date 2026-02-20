@@ -5,7 +5,7 @@
 
 ## 快速开始
 1. 克隆仓库：`git clone https://github.com/darkice1/easy-biance.git`
-2. 配置凭证：复制 `config.txt`，在本地或环境变量中填入 `BIANCE_URL`、`BIANCE_KEY`、`BIANCE_SECRET`。
+2. 配置凭证：复制 `config.txt`，在本地或环境变量中填入 `BIANCE_URL`、`BIANCE_KEY`、`BIANCE_SECRET`。如需代理重试，可额外设置 `BIANCE_HTTP_PROXY=socks5h://127.0.0.1:2080`。
 3. 构建并运行示例：
    ```bash
    ./gradlew build
@@ -33,6 +33,7 @@
 ## 常见问题
 - **无密钥运行测试**：使用桩或模拟响应，不要将真实密钥提交至仓库。
 - **时间同步错误**：使用 `BianceClient.time()` 校验服务器时间，或在请求中加入 `timestamp` 参数。
+- **`code=-2015` 报错**：SDK 会在检测到 `{"code":-2015,...}` 后自动读取 `BIANCE_HTTP_PROXY`（或 JVM 参数 `-Dbiance.http.proxy=...`）并通过代理重试一次。
 - **依赖冲突**：调整 `build.gradle.kts` 中的依赖版本并运行 `./gradlew dependencies` 检查树状结构。
 
 ## 相关链接

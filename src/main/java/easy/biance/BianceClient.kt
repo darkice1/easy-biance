@@ -12,6 +12,10 @@ import org.json.JSONObject
 
 import java.math.BigDecimal
 import java.math.RoundingMode
+import java.net.HttpURLConnection
+import java.net.InetSocketAddress
+import java.net.Proxy
+import java.net.URI
 
 
 /**
@@ -26,6 +30,16 @@ import java.math.RoundingMode
 class BianceClient(private val url: String=Config.getProperty("BIANCE_URL")!!,
                    private val key:String=Config.getProperty("BIANCE_KEY")!!,
                    private val secret:String=Config.getProperty("BIANCE_SECRET")!!) {
+	companion object {
+		private const val INVALID_API_KEY_ERROR_CODE = -2015
+		private const val HTTP_PROXY_PROPERTY = "biance.http.proxy"
+		private const val HTTP_PROXY_CONFIG_KEY = "BIANCE_HTTP_PROXY"
+		private const val HTTP_PROXY_ENV = "BIANCE_HTTP_PROXY"
+		private const val DEFAULT_HTTP_PROXY_PORT = 8080
+		private const val DEFAULT_SOCKS_PROXY_PORT = 1080
+		private const val DEFAULT_TIMEOUT_MILLIS = 30_000
+	}
+
 	private val client = EHttpClient()
 	private val sclient: SpotClient by lazy {
 //		println("key:$key secret:$secret")
@@ -62,9 +76,8 @@ class BianceClient(private val url: String=Config.getProperty("BIANCE_URL")!!,
 
 //		val resp = client.get(surl,head,null)
 
-		val resp = if(ispost)
+		if(ispost)
 		{
-			val post = HashMap<String,String>()
 			if (ishmac)
 			{
 				val signature = signature(rbody)
@@ -77,8 +90,6 @@ class BianceClient(private val url: String=Config.getProperty("BIANCE_URL")!!,
 //				post[""] = "$rbody&signature=$signature"
 			}
 //			println("surl:$surl\npost:$post\nhead:$head")
-
-			client.postToString(surl,post,head)
 		}
 		else
 		{
@@ -91,9 +102,12 @@ class BianceClient(private val url: String=Config.getProperty("BIANCE_URL")!!,
 				}
 			}
 //			println(surl)
-
-			client.get(surl,head,null)
 		}
+		val resp = sendRequestWithProxyRetry(
+			requestUrl = surl,
+			headers = head,
+			isPost = ispost
+		)
 /*		val resp = if (hmac){
 			client.postToString(surl,post,head)
 		}
@@ -206,6 +220,191 @@ class BianceClient(private val url: String=Config.getProperty("BIANCE_URL")!!,
 				map[name] = value
 			}
 		}
+	}
+
+	private fun sendRequestWithProxyRetry(
+		requestUrl: String,
+		headers: Map<String, String>,
+		isPost: Boolean
+	): String {
+		val directResponse = executeRequest(client, requestUrl, headers, isPost)
+		if (!shouldRetryWithProxy(directResponse)) {
+			return directResponse
+		}
+
+		val endpoint = resolveProxyEndpoint()
+		if (endpoint == null) {
+			Log.OutLog(
+				"BianceClient hit code=$INVALID_API_KEY_ERROR_CODE but BIANCE_HTTP_PROXY not configured, skip proxy retry"
+			)
+			return directResponse
+		}
+
+		Log.OutLog(
+			"BianceClient hit code=$INVALID_API_KEY_ERROR_CODE, retry once via proxy ${endpoint.uri}"
+		)
+
+		val proxyResponse = runCatching {
+			executeRequestWithProxy(endpoint, requestUrl, headers, isPost)
+		}.onFailure {
+			Log.OutException(it, "BianceClient.sendRequestWithProxyRetry")
+		}.getOrNull()
+
+		return proxyResponse ?: directResponse
+	}
+
+	private fun executeRequest(
+		httpClient: EHttpClient,
+		requestUrl: String,
+		headers: Map<String, String>,
+		isPost: Boolean
+	): String {
+		return if (isPost) {
+			httpClient.postToString(requestUrl, emptyMap(), headers)
+		} else {
+			httpClient.get(requestUrl, headers, null)
+		}
+	}
+
+	private fun executeRequestWithProxy(
+		endpoint: ProxyEndpoint,
+		requestUrl: String,
+		headers: Map<String, String>,
+		isPost: Boolean
+	): String {
+		return if (isSocksProxyScheme(endpoint.scheme)) {
+			executeRequestByUrlConnection(endpoint, requestUrl, headers, isPost)
+		} else {
+			val proxyClient = EHttpClient(endpoint.host, endpoint.port)
+			try {
+				executeRequest(proxyClient, requestUrl, headers, isPost)
+			} finally {
+				proxyClient.close()
+			}
+		}
+	}
+
+	private fun executeRequestByUrlConnection(
+		endpoint: ProxyEndpoint,
+		requestUrl: String,
+		headers: Map<String, String>,
+		isPost: Boolean
+	): String {
+		val proxyType = if (isSocksProxyScheme(endpoint.scheme)) Proxy.Type.SOCKS else Proxy.Type.HTTP
+		val proxyAddress = InetSocketAddress.createUnresolved(endpoint.host, endpoint.port)
+		val proxy = Proxy(proxyType, proxyAddress)
+		val connection = URI.create(requestUrl).toURL().openConnection(proxy) as HttpURLConnection
+
+		return try {
+			connection.connectTimeout = DEFAULT_TIMEOUT_MILLIS
+			connection.readTimeout = DEFAULT_TIMEOUT_MILLIS
+			connection.requestMethod = if (isPost) "POST" else "GET"
+			connection.instanceFollowRedirects = false
+			headers.forEach { (name, value) -> connection.setRequestProperty(name, value) }
+			if (isPost) {
+				connection.doOutput = true
+				connection.outputStream.use { output ->
+					output.write(ByteArray(0))
+				}
+			}
+
+			val responseBytes = openResponseStream(connection)?.use { input ->
+				input.readAllBytes()
+			} ?: ByteArray(0)
+			val charset = connection.contentEncoding
+				?.let { encoding -> runCatching { charset(encoding) }.getOrNull() }
+				?: Charsets.UTF_8
+			responseBytes.toString(charset)
+		} finally {
+			connection.disconnect()
+		}
+	}
+
+	private fun openResponseStream(connection: HttpURLConnection) =
+		runCatching { connection.inputStream }.getOrElse { connection.errorStream }
+
+	internal fun shouldRetryWithProxy(response: String): Boolean {
+		val text = response.trimStart()
+		if (!text.startsWith("{")) {
+			return false
+		}
+		return runCatching {
+			JSONObject(text).optInt("code", 0) == INVALID_API_KEY_ERROR_CODE
+		}.getOrDefault(false)
+	}
+
+	private fun resolveProxyEndpoint(): ProxyEndpoint? {
+		val configuredValue = resolveProxyConfigValue() ?: return null
+		val endpoint = parseProxyEndpoint(configuredValue)
+		if (endpoint == null) {
+			Log.OutLog("BianceClient ignored invalid BIANCE_HTTP_PROXY config: $configuredValue")
+		}
+		return endpoint
+	}
+
+	private fun resolveProxyConfigValue(): String? {
+		val propertyValue = System.getProperty(HTTP_PROXY_PROPERTY)
+			?.trim()
+			?.takeIf { it.isNotEmpty() }
+		if (propertyValue != null) {
+			return propertyValue
+		}
+
+		val configValue = Config.getProperty(HTTP_PROXY_CONFIG_KEY)
+			?.trim()
+			?.takeIf { it.isNotEmpty() }
+		if (configValue != null) {
+			return configValue
+		}
+
+		return System.getenv(HTTP_PROXY_ENV)
+			?.trim()
+			?.takeIf { it.isNotEmpty() }
+	}
+
+	internal fun parseProxyEndpoint(proxyValue: String): ProxyEndpoint? {
+		val raw = proxyValue.trim()
+		if (raw.isEmpty()) {
+			return null
+		}
+
+		val normalized = when {
+			raw.equals("off", ignoreCase = true) -> return null
+			raw.equals("none", ignoreCase = true) -> return null
+			raw.equals("false", ignoreCase = true) -> return null
+			raw.contains("://") -> raw
+			else -> "socks5h://$raw"
+		}
+
+		val uri = runCatching { URI.create(normalized) }.getOrNull() ?: return null
+		val scheme = uri.scheme?.lowercase() ?: return null
+		if (!isSocksProxyScheme(scheme) && !isHttpProxyScheme(scheme)) {
+			return null
+		}
+
+		val host = uri.host?.trim()?.takeIf { it.isNotEmpty() } ?: return null
+		val defaultPort = if (isSocksProxyScheme(scheme)) DEFAULT_SOCKS_PROXY_PORT else DEFAULT_HTTP_PROXY_PORT
+		val port = if (uri.port == -1) defaultPort else uri.port
+		if (port !in 1..65535) {
+			return null
+		}
+		return ProxyEndpoint(scheme, host, port)
+	}
+
+	private fun isSocksProxyScheme(scheme: String): Boolean {
+		return scheme == "socks" || scheme == "socks5" || scheme == "socks5h"
+	}
+
+	private fun isHttpProxyScheme(scheme: String): Boolean {
+		return scheme == "http" || scheme == "https"
+	}
+
+	internal data class ProxyEndpoint(
+		val scheme: String,
+		val host: String,
+		val port: Int
+	) {
+		val uri: String = "$scheme://$host:$port"
 	}
 
 	/**
@@ -541,7 +740,7 @@ class BianceClient(private val url: String=Config.getProperty("BIANCE_URL")!!,
      * 文档: https://developers.binance.com/docs/zh-CN/wallet/capital/withdraw-history
      *
      * @param coin 币种(可选)
-     * @param status 状态(可选) 0:Email Sent, 1:Cancelled, 2:Awaiting Approval, 3:Rejected, 4:Processing, 5:Failure, 6:Completed
+     * @param status 状态(可选) 0:Email Sent, 1:Canceled, 2:Awaiting Approval, 3:Rejected, 4:Processing, 5:Failure, 6:Completed
      * @param startTime 开始时间(毫秒, 可选)
      * @param endTime 结束时间(毫秒, 可选)
      * @param offset 分页偏移(可选)

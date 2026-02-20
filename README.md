@@ -11,7 +11,10 @@
 BIANCE_URL=https://api.binance.com
 BIANCE_KEY=my key
 BIANCE_SECRET=my secret
+BIANCE_HTTP_PROXY=socks5h://127.0.0.1:2080
 ```
+当接口响应 `{"code":-2015,...}` 时，SDK 会自动读取 `BIANCE_HTTP_PROXY`（或 JVM 参数 `-Dbiance.http.proxy=...`）并通过代理重试一次。
+
 # maven
 ```xml
 <!-- https://mvnrepository.com/artifact/com.github.darkice1/easy-biance -->
