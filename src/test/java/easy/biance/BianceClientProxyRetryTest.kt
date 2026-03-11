@@ -48,4 +48,29 @@ class BianceClientProxyRetryTest {
 	fun parseProxyEndpointReturnsNullForOffValue() {
 		assertNull(client.parseProxyEndpoint("off"))
 	}
+
+	@Test
+	fun endpointCacheKeyShouldIgnoreQueryString() {
+		val first = client.endpointCacheKey(
+			requestUrl = "https://api.binance.com/api/v3/account?timestamp=1&recvWindow=5000",
+			isPost = false
+		)
+		val second = client.endpointCacheKey(
+			requestUrl = "https://api.binance.com/api/v3/account?timestamp=2&recvWindow=1000",
+			isPost = false
+		)
+
+		assertEquals("GET /api/v3/account", first)
+		assertEquals(first, second)
+	}
+
+	@Test
+	fun cacheProxyPreferredEndpointShouldBeMethodAware() {
+		val requestUrl = "https://api.binance.com/api/v3/account?timestamp=1"
+		client.clearProxyPreferredEndpointCache()
+		client.cacheProxyPreferredEndpoint(requestUrl, isPost = false)
+
+		assertTrue(client.hasCachedProxyPreferredEndpoint("https://api.binance.com/api/v3/account?timestamp=9", isPost = false))
+		assertFalse(client.hasCachedProxyPreferredEndpoint("https://api.binance.com/api/v3/account?timestamp=9", isPost = true))
+	}
 }

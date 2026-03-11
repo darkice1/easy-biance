@@ -16,6 +16,7 @@ import java.net.HttpURLConnection
 import java.net.InetSocketAddress
 import java.net.Proxy
 import java.net.URI
+import java.util.concurrent.ConcurrentHashMap
 
 
 /**
@@ -45,6 +46,7 @@ class BianceClient(private val url: String=Config.getProperty("BIANCE_URL")!!,
 //		println("key:$key secret:$secret")
 		SpotClientImpl(key, secret)
 	}
+	private val proxyPreferredEndpoints = ConcurrentHashMap.newKeySet<String>()
 
 
 	private fun mapToUrl(map:MutableMap<String,Any>):String{
@@ -227,6 +229,25 @@ class BianceClient(private val url: String=Config.getProperty("BIANCE_URL")!!,
 		headers: Map<String, String>,
 		isPost: Boolean
 	): String {
+		val endpointKey = endpointCacheKey(requestUrl, isPost)
+		if (proxyPreferredEndpoints.contains(endpointKey)) {
+			val cachedEndpoint = resolveProxyEndpoint()
+			if (cachedEndpoint != null) {
+				Log.OutLog(
+					"BianceClient use cached proxy-first for [$endpointKey] via ${cachedEndpoint.uri}"
+				)
+				val proxyFirstResponse = runCatching {
+					executeRequestWithProxy(cachedEndpoint, requestUrl, headers, isPost)
+				}.onFailure {
+					Log.OutException(it, "BianceClient.sendRequestWithProxyRetry")
+				}.getOrNull()
+				if (proxyFirstResponse != null) {
+					return proxyFirstResponse
+				}
+			}
+			proxyPreferredEndpoints.remove(endpointKey)
+		}
+
 		val directResponse = executeRequest(client, requestUrl, headers, isPost)
 		if (!shouldRetryWithProxy(directResponse)) {
 			return directResponse
@@ -239,6 +260,7 @@ class BianceClient(private val url: String=Config.getProperty("BIANCE_URL")!!,
 			)
 			return directResponse
 		}
+		proxyPreferredEndpoints.add(endpointKey)
 
 		Log.OutLog(
 			"BianceClient hit code=$INVALID_API_KEY_ERROR_CODE, retry once via proxy ${endpoint.uri}"
@@ -331,6 +353,27 @@ class BianceClient(private val url: String=Config.getProperty("BIANCE_URL")!!,
 		return runCatching {
 			JSONObject(text).optInt("code", 0) == INVALID_API_KEY_ERROR_CODE
 		}.getOrDefault(false)
+	}
+
+	internal fun endpointCacheKey(requestUrl: String, isPost: Boolean): String {
+		val method = if (isPost) "POST" else "GET"
+		val path = runCatching { URI.create(requestUrl).path }
+			.getOrNull()
+			?.takeIf { it.isNotBlank() }
+			?: requestUrl.substringBefore('?')
+		return "$method $path"
+	}
+
+	internal fun cacheProxyPreferredEndpoint(requestUrl: String, isPost: Boolean) {
+		proxyPreferredEndpoints.add(endpointCacheKey(requestUrl, isPost))
+	}
+
+	internal fun hasCachedProxyPreferredEndpoint(requestUrl: String, isPost: Boolean): Boolean {
+		return proxyPreferredEndpoints.contains(endpointCacheKey(requestUrl, isPost))
+	}
+
+	internal fun clearProxyPreferredEndpointCache() {
+		proxyPreferredEndpoints.clear()
 	}
 
 	private fun resolveProxyEndpoint(): ProxyEndpoint? {
