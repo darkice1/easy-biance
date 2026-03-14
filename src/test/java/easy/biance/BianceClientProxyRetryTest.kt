@@ -60,17 +60,66 @@ class BianceClientProxyRetryTest {
 			isPost = false
 		)
 
-		assertEquals("GET /api/v3/account", first)
 		assertEquals(first, second)
+		assertTrue(first.endsWith("GET /api/v3/account"))
 	}
 
 	@Test
-	fun cacheProxyPreferredEndpointShouldBeMethodAware() {
+	fun cacheProxyPreferredEndpointShouldBeMethodAwareAndPathIsolated() {
 		val requestUrl = "https://api.binance.com/api/v3/account?timestamp=1"
+		val otherPathUrl = "https://api.binance.com/api/v3/openOrders?timestamp=1"
 		client.clearProxyPreferredEndpointCache()
 		client.cacheProxyPreferredEndpoint(requestUrl, isPost = false)
 
 		assertTrue(client.hasCachedProxyPreferredEndpoint("https://api.binance.com/api/v3/account?timestamp=9", isPost = false))
 		assertFalse(client.hasCachedProxyPreferredEndpoint("https://api.binance.com/api/v3/account?timestamp=9", isPost = true))
+		assertFalse(client.hasCachedProxyPreferredEndpoint(otherPathUrl, isPost = false))
+	}
+
+	@Test
+	fun cacheProxyPreferredEndpointShouldSurviveClientRebuild() {
+		val firstClient = BianceClient(
+			url = "https://api.binance.com",
+			key = "same-key",
+			secret = "secret-a"
+		)
+		val secondClient = BianceClient(
+			url = "https://api.binance.com",
+			key = "same-key",
+			secret = "secret-b"
+		)
+		val requestUrl = "https://api.binance.com/api/v3/account?timestamp=1"
+
+		firstClient.clearProxyPreferredEndpointCache()
+		firstClient.cacheProxyPreferredEndpoint(requestUrl, isPost = false)
+		assertTrue(secondClient.hasCachedProxyPreferredEndpoint(requestUrl, isPost = false))
+	}
+
+	@Test
+	fun cacheProxyPreferredEndpointShouldNotLeakAcrossApiKeys() {
+		val firstClient = BianceClient(
+			url = "https://api.binance.com",
+			key = "key-a",
+			secret = "secret-a"
+		)
+		val secondClient = BianceClient(
+			url = "https://api.binance.com",
+			key = "key-b",
+			secret = "secret-b"
+		)
+		val requestUrl = "https://api.binance.com/api/v3/account?timestamp=1"
+
+		firstClient.clearProxyPreferredEndpointCache()
+		firstClient.cacheProxyPreferredEndpoint(requestUrl, isPost = false)
+		assertFalse(secondClient.hasCachedProxyPreferredEndpoint(requestUrl, isPost = false))
+	}
+
+	@Test
+	fun cacheProxyPreferredEndpointShouldRespectTtl() {
+		val requestUrl = "https://api.binance.com/api/v3/account?timestamp=1"
+		client.clearProxyPreferredEndpointCache()
+		client.cacheProxyPreferredEndpoint(requestUrl, isPost = false, ttlMillis = 0)
+
+		assertFalse(client.hasCachedProxyPreferredEndpoint(requestUrl, isPost = false))
 	}
 }

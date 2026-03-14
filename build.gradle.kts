@@ -9,7 +9,7 @@ plugins {
 }
 
 group   = "com.github.darkice1"
-version = "1.0.78"                                  // 与 pom.version 对齐
+version = "1.0.79"                                  // 与 pom.version 对齐
 
 val projectName = "easy-biance"
 val projectDesc = "Neo easy Biance SDK."

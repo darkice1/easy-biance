@@ -39,6 +39,8 @@ class BianceClient(private val url: String=Config.getProperty("BIANCE_URL")!!,
 		private const val DEFAULT_HTTP_PROXY_PORT = 8080
 		private const val DEFAULT_SOCKS_PROXY_PORT = 1080
 		private const val DEFAULT_TIMEOUT_MILLIS = 30_000
+		private const val PROXY_PREFERRED_TTL_MILLIS = 60 * 60 * 1000L
+		private val proxyPreferredEndpointExpirations = ConcurrentHashMap<String, Long>()
 	}
 
 	private val client = EHttpClient()
@@ -46,7 +48,6 @@ class BianceClient(private val url: String=Config.getProperty("BIANCE_URL")!!,
 //		println("key:$key secret:$secret")
 		SpotClientImpl(key, secret)
 	}
-	private val proxyPreferredEndpoints = ConcurrentHashMap.newKeySet<String>()
 
 
 	private fun mapToUrl(map:MutableMap<String,Any>):String{
@@ -230,7 +231,7 @@ class BianceClient(private val url: String=Config.getProperty("BIANCE_URL")!!,
 		isPost: Boolean
 	): String {
 		val endpointKey = endpointCacheKey(requestUrl, isPost)
-		if (proxyPreferredEndpoints.contains(endpointKey)) {
+		if (isProxyPreferred(endpointKey)) {
 			val cachedEndpoint = resolveProxyEndpoint()
 			if (cachedEndpoint != null) {
 				Log.OutLog(
@@ -245,11 +246,12 @@ class BianceClient(private val url: String=Config.getProperty("BIANCE_URL")!!,
 					return proxyFirstResponse
 				}
 			}
-			proxyPreferredEndpoints.remove(endpointKey)
+			clearProxyPreferred(endpointKey)
 		}
 
 		val directResponse = executeRequest(client, requestUrl, headers, isPost)
 		if (!shouldRetryWithProxy(directResponse)) {
+			clearProxyPreferred(endpointKey)
 			return directResponse
 		}
 
@@ -260,7 +262,7 @@ class BianceClient(private val url: String=Config.getProperty("BIANCE_URL")!!,
 			)
 			return directResponse
 		}
-		proxyPreferredEndpoints.add(endpointKey)
+		markProxyPreferred(endpointKey)
 
 		Log.OutLog(
 			"BianceClient hit code=$INVALID_API_KEY_ERROR_CODE, retry once via proxy ${endpoint.uri}"
@@ -272,6 +274,9 @@ class BianceClient(private val url: String=Config.getProperty("BIANCE_URL")!!,
 			Log.OutException(it, "BianceClient.sendRequestWithProxyRetry")
 		}.getOrNull()
 
+		if (proxyResponse == null) {
+			clearProxyPreferred(endpointKey)
+		}
 		return proxyResponse ?: directResponse
 	}
 
@@ -361,19 +366,37 @@ class BianceClient(private val url: String=Config.getProperty("BIANCE_URL")!!,
 			.getOrNull()
 			?.takeIf { it.isNotBlank() }
 			?: requestUrl.substringBefore('?')
-		return "$method $path"
+		return "${url.trimEnd('/')}:${key.hashCode()}:$method $path"
 	}
 
-	internal fun cacheProxyPreferredEndpoint(requestUrl: String, isPost: Boolean) {
-		proxyPreferredEndpoints.add(endpointCacheKey(requestUrl, isPost))
+	private fun isProxyPreferred(endpointKey: String): Boolean {
+		val expireAt = proxyPreferredEndpointExpirations[endpointKey] ?: return false
+		if (expireAt <= System.currentTimeMillis()) {
+			proxyPreferredEndpointExpirations.remove(endpointKey, expireAt)
+			return false
+		}
+		return true
+	}
+
+	private fun markProxyPreferred(endpointKey: String, ttlMillis: Long = PROXY_PREFERRED_TTL_MILLIS) {
+		val expireAt = System.currentTimeMillis() + ttlMillis.coerceAtLeast(0L)
+		proxyPreferredEndpointExpirations[endpointKey] = expireAt
+	}
+
+	private fun clearProxyPreferred(endpointKey: String) {
+		proxyPreferredEndpointExpirations.remove(endpointKey)
+	}
+
+	internal fun cacheProxyPreferredEndpoint(requestUrl: String, isPost: Boolean, ttlMillis: Long = PROXY_PREFERRED_TTL_MILLIS) {
+		markProxyPreferred(endpointCacheKey(requestUrl, isPost), ttlMillis)
 	}
 
 	internal fun hasCachedProxyPreferredEndpoint(requestUrl: String, isPost: Boolean): Boolean {
-		return proxyPreferredEndpoints.contains(endpointCacheKey(requestUrl, isPost))
+		return isProxyPreferred(endpointCacheKey(requestUrl, isPost))
 	}
 
 	internal fun clearProxyPreferredEndpointCache() {
-		proxyPreferredEndpoints.clear()
+		proxyPreferredEndpointExpirations.clear()
 	}
 
 	private fun resolveProxyEndpoint(): ProxyEndpoint? {
